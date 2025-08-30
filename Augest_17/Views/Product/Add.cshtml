@@ -1,0 +1,62 @@
+﻿@model Augest_17.Models.Product
+
+@{
+    ViewData["Title"] = "Add Product";
+}
+
+<h2 class="mb-4 text-primary">Add New Product</h2>
+
+<form asp-action="Add" method="post" class="needs-validation" novalidate>
+    <div class="row g-3">
+        <!-- Product Name -->
+        <div class="col-md-6">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" placeholder="Enter product name" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <!-- Category -->
+        <div class="col-md-6">
+            <label asp-for="Category" class="form-label"></label>
+            <input asp-for="Category" class="form-control" placeholder="Enter category" />
+            <span asp-validation-for="Category" class="text-danger"></span>
+        </div>
+
+        <!-- Description -->
+        <div class="col-12">
+            <label asp-for="Description" class="form-label"></label>
+            <textarea asp-for="Description" class="form-control" rows="3" placeholder="Enter description"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <!-- Price -->
+        <div class="col-md-4">
+            <label asp-for="Price" class="form-label"></label>
+            <input asp-for="Price" class="form-control" placeholder="Enter price" />
+            <span asp-validation-for="Price" class="text-danger"></span>
+        </div>
+
+        <!-- Stock -->
+        <div class="col-md-4">
+            <label asp-for="Stock" class="form-label"></label>
+            <input asp-for="Stock" class="form-control" placeholder="Enter stock" />
+            <span asp-validation-for="Stock" class="text-danger"></span>
+        </div>
+
+        <!-- Image URL -->
+        <div class="col-md-4">
+            <label asp-for="ImageUrl" class="form-label"></label>
+            <input asp-for="ImageUrl" class="form-control" placeholder="https://example.com/image.jpg" />
+            <span asp-validation-for="ImageUrl" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="mt-4 d-flex gap-2">
+        <button type="submit" class="btn btn-success px-4">💾 Save</button>
+        <a asp-action="Index" class="btn btn-secondary px-4">⬅ Back to List</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

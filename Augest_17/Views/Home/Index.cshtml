@@ -1,0 +1,123 @@
+﻿@model List<Product>
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "Home Page";
+    var username = HttpContextAccessor.HttpContext?.Session.GetString("Username");
+}
+
+@if (!string.IsNullOrEmpty(username))
+{
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">👋 Welcome, @username</h1>
+        <p class="text-muted">Explore our amazing products below</p>
+    </div>
+}
+else
+{
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">🛍️ Welcome to our store</h1>
+        <p class="text-muted">Login to like and add products to your cart</p>
+    </div>
+}
+
+<hr />
+
+@if (Model != null && Model.Any())
+{
+    <div class="container">
+        <div class="row g-4">
+            @foreach (var product in Model)
+            {
+                var isLiked = ViewBag.UserLikes != null &&
+                ((List<Guid>)ViewBag.UserLikes).Contains(product.Id);
+
+                var isInCart = ViewBag.UserCart != null &&
+                ((List<Guid>)ViewBag.UserCart).Contains(product.Id);
+
+                <div class="col-md-4 col-sm-6">
+                    <div class="card shadow-lg border-0 h-100">
+                        <img src="@product.ImageUrl" class="card-img-top" alt="@product.Name" style="height:220px; object-fit:cover;" />
+
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title fw-bold">@product.Name</h5>
+                            <p class="card-text text-muted">@product.Description</p>
+                            <h6 class="text-success fw-bold">₹@product.Price</h6>
+
+                            <div class="mt-auto">
+                                <button class="btn @(isLiked ? "btn-danger" : "btn-outline-danger") btn-sm like-btn"
+                                        data-product-id="@product.Id"
+                                        data-product-price="@product.Price">
+                                    @(isLiked ? "❤️ Liked" : "♡ Like")
+                                </button>
+
+                                <button class="btn @(isInCart ? "btn-success" : "btn-outline-primary") btn-sm cart-btn ms-2"
+                                        data-product-id="@product.Id">
+                                    @(isInCart ? "✅ In Cart" : "🛒 Add to Cart")
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-info text-center" role="alert">
+        No products available at the moment. Please check back later.
+    </div>
+}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Like button
+        document.querySelectorAll(".like-btn").forEach(btn => {
+            btn.addEventListener("click", function () {
+                let productId = this.dataset.productId;
+                let productPrice = this.dataset.productPrice;
+
+                fetch('/Like/ToggleLike', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId: productId, productPrice: productPrice })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.liked) {
+                        this.innerHTML = "❤️ Liked";
+                        this.classList.remove("btn-outline-danger");
+                        this.classList.add("btn-danger");
+                    } else {
+                        this.innerHTML = "♡ Like";
+                        this.classList.remove("btn-danger");
+                        this.classList.add("btn-outline-danger");
+                    }
+                });
+            });
+        });
+
+        // Cart button
+        document.querySelectorAll(".cart-btn").forEach(btn => {
+            btn.addEventListener("click", function () {
+                let productId = this.dataset.productId;
+
+                fetch('/Cart/AddToCart', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId: productId })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.added) {
+                        this.innerHTML = `✅ In Cart (${data.quantity})`;
+                        this.classList.remove("btn-outline-primary");
+                        this.classList.add("btn-success");
+                    }
+                });
+            });
+        });
+    });
+
+</script>

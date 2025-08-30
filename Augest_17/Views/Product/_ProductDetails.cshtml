@@ -1,0 +1,21 @@
+﻿@model Augest_17.Models.Product
+
+<div class="row">
+    <div class="col-md-4 text-center">
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid rounded shadow" />
+        }
+        else
+        {
+            <span class="text-muted">No Image Available</span>
+        }
+    </div>
+    <div class="col-md-8">
+        <h5 class="text-primary">@Model.Name</h5>
+        <p>@Model.Description</p>
+        <p><strong>Category:</strong> @Model.Category</p>
+        <p><strong>Price:</strong> ₹@Model.Price.ToString("N2")</p>
+        <p><strong>Stock:</strong> @Model.Stock</p>
+    </div>
+</div>

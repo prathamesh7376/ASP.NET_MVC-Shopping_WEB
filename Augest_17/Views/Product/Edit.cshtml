@@ -1,0 +1,78 @@
+﻿@model Product
+
+<div class="container mt-4">
+    <div class="card shadow-lg border-0 rounded-3">
+        <div class="card-header bg-primary text-white text-center">
+            <h4 class="mb-0">✏️ Edit Product</h4>
+        </div>
+        <div class="card-body p-4">
+            <form asp-action="Edit" method="post" novalidate>
+                <!-- Hidden Id for binding -->
+                <input type="hidden" asp-for="Id" />
+
+                <div class="row g-3">
+                    <!-- Id (readonly display) -->
+                    <div class="col-md-6">
+                        <label asp-for="Id" class="form-label fw-bold"></label>
+                        <input asp-for="Id" class="form-control-plaintext border rounded px-2 bg-light" readonly />
+                    </div>
+
+                    <!-- Product Name -->
+                    <div class="col-md-6">
+                        <label asp-for="Name" class="form-label fw-bold"></label>
+                        <input asp-for="Name" class="form-control" placeholder="Enter product name" />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Category -->
+                    <div class="col-md-6">
+                        <label asp-for="Category" class="form-label fw-bold"></label>
+                        <input asp-for="Category" class="form-control" placeholder="Enter category" />
+                        <span asp-validation-for="Category" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="col-12">
+                        <label asp-for="Description" class="form-label fw-bold"></label>
+                        <textarea asp-for="Description" class="form-control" rows="3" placeholder="Enter description"></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Price -->
+                    <div class="col-md-4">
+                        <label asp-for="Price" class="form-label fw-bold"></label>
+                        <div class="input-group">
+                            <span class="input-group-text">₹</span>
+                            <input asp-for="Price" class="form-control" placeholder="Enter price" />
+                        </div>
+                        <span asp-validation-for="Price" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Stock -->
+                    <div class="col-md-4">
+                        <label asp-for="Stock" class="form-label fw-bold"></label>
+                        <input asp-for="Stock" class="form-control" placeholder="Enter stock" />
+                        <span asp-validation-for="Stock" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Image URL -->
+                    <div class="col-md-4">
+                        <label asp-for="ImageUrl" class="form-label fw-bold"></label>
+                        <input asp-for="ImageUrl" class="form-control" placeholder="Enter image URL" />
+                        <span asp-validation-for="ImageUrl" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="mt-4 d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-outline-secondary px-4">
+                        ⬅ Back to List
+                    </a>
+                    <button type="submit" class="btn btn-success px-4">
+                        💾 Update Product
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

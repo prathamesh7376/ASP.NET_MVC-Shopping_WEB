@@ -1,0 +1,164 @@
+﻿@using X.PagedList.Mvc.Core
+@model X.PagedList.IPagedList<Augest_17.Models.Product>
+
+
+@{
+    ViewData["Title"] = "Product List";
+}
+
+<h2 class="mb-4 text-primary">📦 Product List</h2>
+
+<div class="d-flex justify-content-between mb-3">
+    <a asp-action="Add" class="btn btn-success">
+        ➕ Add New Product
+    </a>
+</div>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table table-bordered table-striped table-hover align-middle shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>Product ID</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th class="text-end">Price (₹)</th>
+                <th>Category</th>
+                <th class="text-center">Stock</th>
+                <th class="text-center">Image</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model)
+            {
+                <tr>
+                    <td>@product.Id</td>
+                    <td>@product.Name</td>
+                    <td>@product.Description</td>
+                    <td class="text-end">@product.Price.ToString("N2")</td>
+                    <td>@product.Category</td>
+                    <td class="text-center">@product.Stock</td>
+                    <td class="text-center">
+                        @if (!string.IsNullOrEmpty(product.ImageUrl))
+                        {
+                            <img src="@product.ImageUrl" alt="Image" class="img-thumbnail" style="max-height:50px;" />
+                        }
+                        else
+                        {
+                            <span class="text-muted">No Image</span>
+                        }
+                    </td>
+                    <td class="text-center">
+                        <div class="btn-group" role="group">
+                            <a href="javascript:void(0);"
+                               onclick="showProductDetails('@product.Id')"
+                               class="btn btn-info btn-sm">
+                                👁 View
+                            </a>
+
+                            <a asp-action="Edit" asp-route-id="@product.Id" class="btn btn-warning btn-sm">
+                                ✏ Edit
+                            </a>
+                            <form asp-action="Delete" asp-route-id="@product.Id" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Are you sure you want to delete this product?');">
+                                    🗑 Delete
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="d-flex justify-content-center mt-4">
+        @Html.PagedListPager(
+        Model,
+        page => Url.Action("Index", new { page }),
+        new PagedListRenderOptions
+        {
+            LiElementClasses = new[] { "page-item" },
+            PageClasses = new[] { "page-link" },
+            UlElementClasses = new[] { "pagination", "justify-content-center" }
+        }
+        )
+</div>
+}
+else
+{
+    <div class="alert alert-warning text-center">
+        No products available. <a asp-action="Add" class="alert-link">Add one now!</a>
+    </div>
+}
+
+
+<!-- Modal -->
+<div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-animated">
+        <div class="modal-content shadow-lg rounded-3 border-0">
+            <div class="modal-header bg-gradient bg-primary text-white">
+                <h5 class="modal-title fw-bold">
+                    <i class="bi bi-box-seam me-2"></i> Product Details
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalContent">
+                <!-- Product details will load here dynamically -->
+                <div class="text-center text-muted py-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-2">Loading product details...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+    <script>
+        function showProductDetails(id) {
+            // Load partial view into modal body
+            fetch(`/Product/Details/${id}`)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById("modalContent").innerHTML = html;
+                    var modal = new bootstrap.Modal(document.getElementById('productModal'));
+                    modal.show();
+                });
+        }
+    </script>
+}
+
+
+<style>
+    /* Custom modal entry animation */
+    .modal.fade .modal-dialog {
+        transform: translateY(-30px);
+        opacity: 0;
+        transition: all 0.3s ease-out;
+    }
+
+    .modal.fade.show .modal-dialog {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    /* Add a subtle scale-in effect */
+    .modal-animated .modal-content {
+        transform: scale(0.95);
+        transition: transform 0.25s ease-in-out;
+    }
+
+    .modal.fade.show .modal-animated .modal-content {
+        transform: scale(1);
+    }
+
+</style>
