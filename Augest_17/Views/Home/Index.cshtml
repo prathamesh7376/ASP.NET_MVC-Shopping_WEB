@@ -43,19 +43,22 @@ else
                             <h5 class="card-title fw-bold">@product.Name</h5>
                             <p class="card-text text-muted">@product.Description</p>
                             <h6 class="text-success fw-bold">₹@product.Price</h6>
+                            @if (!string.IsNullOrEmpty(username))
+                            {
+                                <div class="mt-auto">
+                                    <button class="btn @(isLiked ? "btn-danger" : "btn-outline-danger") btn-sm like-btn"
+                                            data-product-id="@product.Id"
+                                            data-product-price="@product.Price">
+                                        @(isLiked ? "❤️ Liked" : "♡ Like")
+                                    </button>
 
-                            <div class="mt-auto">
-                                <button class="btn @(isLiked ? "btn-danger" : "btn-outline-danger") btn-sm like-btn"
-                                        data-product-id="@product.Id"
-                                        data-product-price="@product.Price">
-                                    @(isLiked ? "❤️ Liked" : "♡ Like")
-                                </button>
+                                    <button class="btn @(isInCart ? "btn-success" : "btn-outline-primary") btn-sm cart-btn ms-2"
+                                            data-product-id="@product.Id">
+                                        @(isInCart ? "✅ In Cart" : "🛒 Add to Cart")
+                                    </button>
+                                </div>
+                            }
 
-                                <button class="btn @(isInCart ? "btn-success" : "btn-outline-primary") btn-sm cart-btn ms-2"
-                                        data-product-id="@product.Id">
-                                    @(isInCart ? "✅ In Cart" : "🛒 Add to Cart")
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -78,11 +81,12 @@ else
                 let productId = this.dataset.productId;
                 let productPrice = this.dataset.productPrice;
 
-                fetch('/Like/ToggleLike', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ productId: productId, productPrice: productPrice })
-                })
+                    fetch('/Like/ToggleLike', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(productId)   // <-- just the GUID, not wrapped
+    })
+
                 .then(res => res.json())
                 .then(data => {
                     if (data.liked) {
@@ -103,12 +107,11 @@ else
             btn.addEventListener("click", function () {
                 let productId = this.dataset.productId;
 
-                fetch('/Cart/AddToCart', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ productId: productId })
-                })
-                .then(res => res.json())
+                    fetch('/Cart/AddToCart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(productId)
+    }).then(res => res.json())
                 .then(data => {
                     if (data.added) {
                         this.innerHTML = `✅ In Cart (${data.quantity})`;

@@ -15,7 +15,8 @@ namespace Augest_17.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddToCart(Guid productId)
+        [HttpPost]
+        public async Task<IActionResult> AddToCart([FromBody] Guid productId)
         {
             var username = HttpContext.Session.GetString("Username");
             if (string.IsNullOrEmpty(username))

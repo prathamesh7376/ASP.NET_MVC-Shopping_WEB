@@ -1,0 +1,66 @@
+﻿@model List<Product>
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "My Liked Products";
+    var username = HttpContextAccessor.HttpContext?.Session.GetString("Username");
+}
+@if (!string.IsNullOrEmpty(username))
+{
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">💖 @username's Liked Products</h1>
+        <p class="text-muted">Here are the products you've liked</p>
+    </div>
+}
+else
+{
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">💖 Liked Products</h1>
+        <p class="text-muted">Login to view your liked products</p>
+    </div>
+}
+<hr />
+@if (Model != null && Model.Any())
+{
+    <div class="container">
+        <div class="row g-4">
+            @foreach (var product in Model)
+            {
+                var isLiked = ViewBag.UserLikes != null &&
+                ((List<Guid>)ViewBag.UserLikes).Contains(product.Id);
+                var isInCart = ViewBag.UserCart != null &&
+                ((List<Guid>)ViewBag.UserCart).Contains(product.Id);
+                <div class="col-md-4 col-sm-6">
+                    <div class="card shadow-lg border-0 h-100">
+                        <img src="@product.ImageUrl" class="card-img-top" alt="@product.Name" style="height:220px; object-fit:cover;" />
+                        <div class="card-body d-flex flex-column">
+                            <h5 class=" card-title
+            fw-bold">
+                                @product.Name
+                            </h5>
+                            <p class="card-text text-muted">@product.Description</p>
+                            <h6 class="text-success fw-bold">₹@product.Price</h6>
+
+                            @if (!string.IsNullOrEmpty(username))
+                            {
+                                <div class="mt-auto">
+                                    <button class="btn @(isLiked ? "btn-danger" : "btn-outline-danger") btn-sm like-btn"
+                                            data-product-id="@product.Id"
+                                            data-product-price="@product.Price">
+                                        @(isLiked ? "❤️ Liked" : "♡ Like")
+                                    </button>
+                                    <button class="btn @(isInCart ? "btn-success" : "btn-outline-primary") btn-sm cart-btn ms-2"
+                                            data-product-id="@product.Id">
+                                        @(isInCart ? "✅ In Cart" : "🛒 Add to Cart")
+                                    </button>
+                                </div>
+        }
+
+                                        </div>
+                    </div>
+                </div>
+    }
+
+        </div>
+
+    </div>
+}

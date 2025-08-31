@@ -15,7 +15,7 @@ namespace Augest_17.Controllers
         // Replace all instances of '_context' with 'db' to match the constructor-initialized field.
 
         [HttpPost]
-        public async Task<IActionResult> ToggleLike(Guid productId)
+        public async Task<IActionResult> ToggleLike([FromBody] Guid productId)
         {
             var username = HttpContext.Session.GetString("Username");
             if (string.IsNullOrEmpty(username))
@@ -55,5 +55,35 @@ namespace Augest_17.Controllers
         }
 
 
+
+
+        public async Task<IActionResult> MyLiked()
+        {
+            int? userId = HttpContext.Session.GetInt32("UserId");
+            if (!userId.HasValue)
+                return Unauthorized();
+
+            // get all liked product IDs
+            var likedProductIds = await db.Likes
+                .Where(l => l.UserId == userId.Value)
+                .Select(l => l.ProductId)
+                .ToListAsync();
+
+            // fetch products
+            var likedProducts = await db.Products
+                .Where(p => likedProductIds.Contains(p.Id))
+                .ToListAsync();
+
+            // set ViewBag for buttons
+            ViewBag.UserLikes = likedProductIds;
+
+            var cartProductIds = await db.CartItems
+                .Where(c => c.UserId == userId.Value)
+                .Select(c => c.ProductId)
+                .ToListAsync();
+            ViewBag.UserCart = cartProductIds;
+
+            return View(likedProducts);
+        }
     }
 }

@@ -28,7 +28,18 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        
+                        @if (Context.Session.GetString("Username") != null && Context.Session.GetString("Role") == "User")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Like" asp-action="MyLiked">
+                                    Liked  <i class="bi bi-balloon-heart text-danger fs-4"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Index">My Cart</a>
+                            </li>
+                        }
+
                         @if ( Context.Session.GetString("Username") != null )
                         {
                             @if (Context.Session.GetString("Role") == "Admin")
@@ -36,6 +47,8 @@
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Index">My Products</a>
                                 </li>
+                                
+
                             }
                            
                             <li class="nav-item">
